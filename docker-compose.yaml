@@ -1,0 +1,25 @@
+version: '3.4'
+services:
+  standalone_app:
+    build: .
+    command:  ["spark-submit", "--packages", "org.mongodb.spark:mongo-spark-connector_2.11:2.3.1", "linear_regression.py"]
+#    command:  ["spark-submit", "--packages", "org.mongodb.spark:mongo-spark-connector_2.11:2.3.1", "multiclass_classification.py"]
+#    command:  ["spark-submit", "--packages", "org.mongodb.spark:mongo-spark-connector_2.11:2.3.1", "binary_classification.py"]
+    volumes:
+      - ./app:/app
+    depends_on:
+      - my_mongo
+  my_mongo:
+    image: mongo:latest
+    container_name: my_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: tweetmldb
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    ports:
+      - 27017:27017
+      - 28017:28017
+    volumes:
+      - ./mongodb_data:/data/db
+
